@@ -26,28 +26,9 @@ const userSchema = new mongoose.Schema({
 const User = mongoose.model('User', userSchema);
 
 // 3. Telegram Bot Setup
-const BOT_TOKEN = "8849275432:AAHY4YmbQaqXsoZ86eZxEt2sZIaCzGUk900"; // Aapka Bot Token
+const BOT_TOKEN = "7788990011:AAEEFFGGHHIIJJKKLLMM"; // Apna Telegram Bot Token dalein
 const ADMIN_CHAT_ID = "7437877993"; // Aapki Admin Chat ID
-const WEB_APP_URL = "https://aapki-hosted-website-url.com"; // Yahan apni live website/hosting ka URL dalein jahan index.html hosted hai
-
 const bot = new TelegramBot(BOT_TOKEN, { polling: true });
-
-// --- TELEGRAM BOT /START COMMAND (Single Web App Button) ---
-bot.onText(/\/start/, (msg) => {
-  const chatId = msg.chat.id;
-  
-  const options = {
-    reply_markup: {
-      inline_keyboard: [
-        [
-          { text: '⛏️ ➔ Open NexHash Mining', web_app: { url: WEB_APP_URL } }
-        ]
-      ]
-    }
-  };
-
-  bot.sendMessage(chatId, "🎁 Welcome to NexHash Mining!\n\nReady to grow your portfolio?\n\n🚀 Launch the App to begin your journey!", options);
-});
 
 // --- API ENDPOINTS FOR FRONTEND ---
 
@@ -130,7 +111,7 @@ bot.onText(/\/addbalance (.+)/, async (msg, match) => {
     }
     await user.save();
 
-    bot.sendMessage(msg.chat.id, `✅ Success!\nUser ID: \`${targetId}\`\nAdded Balance: +${amount} USDT\nTotal Balance: ${user.claimedBalance} USDT`, { parse_mode: 'Markdown' });
+    bot.sendMessage(msg.chat.id, `✅ Success!\nUser ID: \`${targetUserId}\`\nAdded Balance: +${amount} USDT\nTotal Balance: ${user.claimedBalance} USDT`, { parse_mode: 'Markdown' });
   } catch (err) {
     bot.sendMessage(msg.chat.id, `❌ Error: ${err.message}`);
   }
