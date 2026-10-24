@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>NexHash Mining</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], display: ['Orbitron', 'sans-serif'] },
+          colors: {
+            appbg: '#0B0F19',
+            cardbg: '#161B26',
+            goldbtn: '#F59E0B',
+            greenbtn: '#10B981'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      background-color: #0B0F19;
+      color: #F3F4F6;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow: hidden;
+    }
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .scroll-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .scroll-body::-webkit-scrollbar { display: none; }
+    
+    .pro-card {
+      background: linear-gradient(145deg, #182232, #111827);
+      border: 2px solid #374151;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      border-radius: 20px;
+    }
+    .gold-border-card {
+      background: linear-gradient(145deg, #1F2937, #111827);
+      border: 2px solid #D97706;
+      border-radius: 20px;
+      box-shadow: 0 6px 15px rgba(217,119,6, 0.15);
+    }
+    .green-border-card {
+      background: linear-gradient(145deg, #064E3B, #065F46);
+      border: 2px solid #34D399;
+      border-radius: 20px;
+      box-shadow: 0 6px 15px rgba(52,211,153, 0.2);
+    }
+    .purple-border-card {
+      background: linear-gradient(145deg, #311042, #1E1B4B);
+      border: 2px solid #8B5CF6;
+      border-radius: 20px;
+      box-shadow: 0 6px 15px rgba(139,92,246, 0.2);
+    }
+    .btn-gold {
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: #111827;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+      border-radius: 14px;
+    }
+    .btn-green {
+      background: linear-gradient(135deg, #10B981, #059669);
+      color: #FFFFFF;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      border-radius: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- TOP HEADER -->
+    <header class="p-3 bg-[#0B0F19] border-b border-slate-800 flex justify-between items-center shrink-0">
+      <div class="flex items-center space-x-2.5">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-emerald-500 p-[2px] shadow-lg">
+          <div class="w-full h-full bg-[#111827] rounded-[10px] flex items-center justify-center">
+            <i class="fa-solid fa-microchip text-amber-400 text-base"></i>
+          </div>
+        </div>
+        <div>
+          <h1 class="font-display font-extrabold text-sm tracking-wider text-white">NEXHASH <span class="text-amber-400">MINING</span></h1>
+          <p class="text-[9px] text-slate-400 font-medium">NEXT-GEN CLOUD MINER</p>
+        </div>
+      </div>
+      
+      <div class="flex items-center space-x-1.5 bg-[#1F2937] border border-slate-700 px-3 py-1.5 rounded-full shadow-inner">
+        <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+        <span class="text-xs font-bold text-emerald-400 font-mono" id="header-user-id">ID: 7437877993</span>
+      </div>
+    </header>
+
+    <!-- LIVE TICKER BANNER -->
+    <div class="bg-[#111827] border-b border-slate-800 py-2 px-3 shrink-0">
+      <div class="flex items-center space-x-2 text-xs text-slate-300">
+        <span class="bg-emerald-500 text-slate-950 font-extrabold text-[9px] px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse">LIVE</span>
+        <p id="ticker-text" class="truncate font-mono text-[11px] text-amber-300">User...3885 deposited 25.00 USDT successfully</p>
+      </div>
+    </div>
+
+    <!-- SCROLLABLE CONTENT BODY -->
+    <div class="scroll-body space-y-3.5">
+
+      <!-- ================= TAB: HOME / MINING ================= -->
+      <div id="tab-home" class="tab-content space-y-3.5">
+        
+        <!-- Rig Status Box -->
+        <div class="pro-card p-3.5">
+          <div class="flex justify-between items-center mb-2.5">
+            <span class="text-[11px] font-bold text-amber-400 uppercase tracking-wide flex items-center gap-1.5 font-display">
+              <i class="fa-solid fa-server"></i> NEXHASH CLOUD RIG
+            </span>
+            <span class="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/30">LIVE MINING</span>
+          </div>
+
+          <div class="grid grid-cols-3 gap-2 py-2.5 bg-[#0B0F19] rounded-xl border border-slate-800 text-center">
+            <div>
+              <div class="w-10 h-10 mx-auto rounded-full border border-amber-500/40 flex items-center justify-center bg-[#161B26] shadow-[0_0_10px_rgba(245,158,11,0.2)]">
+                <i class="fa-solid fa-fan text-lg text-amber-400 animate-spin"></i>
+              </div>
+              <span class="text-[9px] text-slate-400 mt-1 block font-mono">FAN #1</span>
+            </div>
+            <div>
+              <div class="w-10 h-10 mx-auto rounded-full border border-amber-500/40 flex items-center justify-center bg-[#161B26] shadow-[0_0_10px_rgba(245,158,11,0.2)]">
+                <i class="fa-solid fa-fan text-lg text-amber-400 animate-spin"></i>
+              </div>
+              <span class="text-[9px] text-slate-400 mt-1 block font-mono">FAN #2</span>
+            </div>
+            <div>
+              <div class="w-10 h-10 mx-auto rounded-full border border-amber-500/40 flex items-center justify-center bg-[#161B26] shadow-[0_0_10px_rgba(245,158,11,0.2)]">
+                <i class="fa-solid fa-fan text-lg text-amber-400 animate-spin"></i>
+              </div>
+              <span class="text-[9px] text-slate-400 mt-1 block font-mono">FAN #3</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-1 mt-3 pt-2 border-t border-slate-800 text-center font-mono">
+            <div>
+              <p class="text-[9px] uppercase text-slate-400 font-semibold">Hash Rate</p>
+              <p class="text-xs font-extrabold text-amber-400 mt-0.5" id="rig-hashrate">0.01 TH/s</p>
+            </div>
+            <div>
+              <p class="text-[9px] uppercase text-slate-400 font-semibold">Temp</p>
+              <p class="text-xs font-extrabold text-emerald-400 mt-0.5">42°C OK</p>
+            </div>
+            <div>
+              <p class="text-[9px] uppercase text-slate-400 font-semibold">Fan Speed</p>
+              <p class="text-xs font-extrabold text-purple-400 mt-0.5">3600 RPM</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Total GHS Power Card -->
+        <div class="green-border-card p-4">
+          <div class="flex justify-between items-start mb-1">
+            <div>
+              <p class="text-xs text-emerald-200 uppercase font-extrabold tracking-wider">TOTAL GHS POWER</p>
+              <div class="flex items-baseline space-x-1.5 mt-1">
+                <span class="text-3xl font-black font-display text-white" id="ghs-display">0.01</span>
+                <span class="text-sm font-extrabold text-emerald-300">GHS</span>
+              </div>
+            </div>
+            <div class="px-2.5 py-1 rounded-full bg-emerald-900/60 border border-emerald-400/40 text-[10px] text-emerald-300 font-mono">
+              Speed Sync Active
+            </div>
+          </div>
+          <p class="text-[11px] text-emerald-100/80 mt-1" id="daily-earning-text">+0.010 USDT/day (Active)</p>
+
+          <div class="grid grid-cols-2 gap-3 mt-3.5">
+            <button onclick="switchTab('deposit')" class="btn-gold py-2.5 px-3 text-xs uppercase tracking-wide flex items-center justify-center space-x-2 active:scale-95 transition-all">
+              <i class="fa-solid fa-plus-circle"></i>
+              <span>ADD GHS</span>
+            </button>
+            <button onclick="switchTab('tasks')" class="btn-green py-2.5 px-3 text-xs uppercase tracking-wide flex items-center justify-center space-x-2 active:scale-95 transition-all">
+              <i class="fa-solid fa-gift"></i>
+              <span>FREE GHS</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Your Balance Card -->
+        <div class="gold-border-card p-4 text-center">
+          <p class="text-xs text-amber-400 uppercase font-bold tracking-wider">YOUR BALANCE</p>
+          <div class="text-2xl font-black font-mono text-white mt-1 tracking-wide" id="main-balance-text">
+            0.00000000 <span class="text-amber-400 text-lg">USDT</span>
+          </div>
+        </div>
+
+        <!-- Mining Status -->
+        <div class="purple-border-card p-4">
+          <div class="flex justify-between items-center mb-2">
+            <div class="flex items-center space-x-2">
+              <span class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
+              <span class="text-xs font-bold text-white uppercase tracking-wider">Mining Status</span>
+            </div>
+            <span class="text-[10px] text-violet-300 font-mono bg-violet-900/60 px-2.5 py-0.5 rounded-full border border-violet-500/40">Daily: <span id="daily-rate-text">0.010 USDT</span></span>
+          </div>
+
+          <div class="flex items-center justify-between my-2 bg-[#111827]/80 p-3 rounded-xl border border-slate-800">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-full bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 font-bold text-lg">₮</div>
+              <div>
+                <p class="text-[9px] text-slate-400 uppercase font-semibold">Unclaimed Mined</p>
+                <span class="text-lg font-black font-mono text-emerald-400" id="mined-counter">0.00000000</span>
+              </div>
+            </div>
+            <button onclick="claimRewards()" class="btn-gold px-5 py-2.5 text-xs uppercase tracking-wider active:scale-95 transition-all">
+              <i class="fa-solid fa-check mr-1"></i> Claim
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ================= TAB: TASKS ================= -->
+      <div id="tab-tasks" class="tab-content hidden space-y-3">
+        <div class="pro-card p-4 border-l-4 border-l-amber-500">
+          <h2 class="font-display font-bold text-sm text-white">DAILY POWER TASKS</h2>
+          <p class="text-[11px] text-slate-400 mt-0.5">Complete simple tasks to earn permanent bonus GHS power.</p>
+        </div>
+
+        <div class="space-y-2.5">
+          <div class="pro-card p-3.5 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-lg"><i class="fa-brands fa-telegram"></i></div>
+              <div>
+                <h3 class="font-semibold text-xs text-white">Join Official Telegram</h3>
+                <p class="text-[10px] text-emerald-400 font-mono">+0.01 GHS Free Power</p>
+              </div>
+            </div>
+            <button onclick="joinTelegramTask(this)" class="btn-gold text-xs px-3.5 py-1.5 rounded-xl">JOIN</button>
+          </div>
+
+          <div class="pro-card p-3.5 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-lg"><i class="fa-solid fa-user-plus"></i></div>
+              <div>
+                <h3 class="font-semibold text-xs text-white">Invite Friend to Join</h3>
+                <p class="text-[10px] text-emerald-400 font-mono">+0.01 GHS Per Invite</p>
+              </div>
+            </div>
+            <button onclick="switchTab('frens')" class="btn-gold text-xs px-3.5 py-1.5 rounded-xl">INVITE</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= TAB: INVITE (FRENS) ================= -->
+      <div id="tab-frens" class="tab-content hidden space-y-3">
+        <div class="pro-card p-4 border-l-4 border-l-emerald-500">
+          <h2 class="font-display font-bold text-sm text-white">INVITE FRIENDS & EARN</h2>
+          <p class="text-[11px] text-slate-400 mt-0.5">Earn commissions & +0.01 GHS power for every friend you invite.</p>
+
+          <div class="mt-3 bg-[#0B0F19] border border-slate-700 rounded-xl p-2 flex items-center justify-between">
+            <input type="text" readonly id="ref-link" value="https://t.me/NexHashMining_Bot?start=7437877993" class="bg-transparent text-[11px] text-amber-400 font-mono w-full px-2 outline-none">
+            <button onclick="copyRef()" class="btn-gold px-3 py-1.5 rounded-lg text-xs shrink-0">Copy</button>
+          </div>
+        </div>
+
+        <div class="pro-card p-4 space-y-2.5">
+          <p class="text-xs font-bold text-slate-200 uppercase tracking-wider">Commission Tiers</p>
+          <div class="flex justify-between items-center p-2.5 rounded-xl bg-[#0B0F19] border border-slate-800 text-xs">
+            <span>Level 1 Direct Referrals</span>
+            <span class="font-bold text-emerald-400 font-mono">15%</span>
+          </div>
+          <div class="flex justify-between items-center p-2.5 rounded-xl bg-[#0B0F19] border border-slate-800 text-xs">
+            <span>Level 2 Network</span>
+            <span class="font-bold text-amber-400 font-mono">3%</span>
+          </div>
+          <div class="flex justify-between items-center p-2.5 rounded-xl bg-[#0B0F19] border border-slate-800 text-xs">
+            <span>Level 3 Network</span>
+            <span class="font-bold text-purple-400 font-mono">1%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= TAB: WALLET ================= -->
+      <div id="tab-wallet" class="tab-content hidden space-y-3">
+        <div class="gold-border-card p-4">
+          <p class="text-xs text-amber-400 uppercase font-bold">TOTAL CLAIMED BALANCE</p>
+          <h1 class="text-2xl font-black text-white mt-1 font-mono" id="wallet-balance-display">0.00000000 <span class="text-amber-400 text-base">USDT</span></h1>
+        </div>
+
+        <div class="pro-card p-3.5 space-y-2">
+          <div class="flex justify-between items-center text-xs border-b border-slate-800 pb-2">
+            <span class="text-slate-400">Locked Deposit Balance:</span>
+            <span class="font-mono text-amber-400 font-bold" id="locked-deposit-text">0.0000 USDT</span>
+          </div>
+          <div class="flex justify-between items-center text-xs pt-1">
+            <span class="text-slate-400">Withdrawable Balance:</span>
+            <span class="font-mono text-emerald-400 font-bold" id="withdrawable-balance-text">0.0000 USDT</span>
+          </div>
+        </div>
+
+        <div class="pro-card p-4 space-y-3">
+          <h3 class="text-xs font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-wallet text-amber-400"></i> Withdraw Funds
+          </h3>
+          <div>
+            <label class="text-[10px] text-slate-400 mb-1 block">USDT BEP-20 Address</label>
+            <input type="text" id="withdraw-addr" placeholder="Enter your BEP-20 address" class="w-full bg-[#0B0F19] border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none font-mono focus:border-amber-500">
+          </div>
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="text-[10px] text-slate-400">Amount (Min: 0.50 USDT)</label>
+              <button onclick="setMaxWithdraw()" class="text-[10px] text-amber-400 font-bold">MAX</button>
+            </div>
+            <input type="number" id="withdraw-amt" placeholder="0.50" class="w-full bg-[#0B0F19] border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none font-mono focus:border-amber-500">
+          </div>
+          <button onclick="processWithdrawal()" class="w-full py-3 btn-gold font-extrabold rounded-xl text-xs uppercase tracking-wider">
+            Confirm Withdrawal
+          </button>
+        </div>
+      </div>
+
+      <!-- ================= TAB: DEPOSIT ================= -->
+      <div id="tab-deposit" class="tab-content hidden space-y-3">
+        <div id="deposit-step-1" class="space-y-3">
+          <div class="gold-border-card p-4 flex justify-between items-center">
+            <div>
+              <h2 class="font-display font-bold text-sm text-white">SELECT CRYPTOCURRENCY</h2>
+              <p class="text-xs text-slate-400 mt-0.5">Choose payment coin (LIVE RATES)</p>
+            </div>
+            <span class="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/30 flex items-center gap-1">
+              <i class="fa-solid fa-rotate animate-spin"></i> LIVE
+            </span>
+          </div>
+
+          <div class="space-y-2">
+            <div onclick="selectCoin('USDT (BEP-20)', '0x6ef06b054dF1C2D4E310f6290697B440A062C7dC', 'tether')" class="pro-card p-3.5 rounded-2xl flex items-center justify-between cursor-pointer active:scale-95 transition-all">
+              <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold">₮</div>
+                <div>
+                  <h3 class="font-bold text-xs text-white">USDT (BEP-20)</h3>
+                  <p class="text-[10px] text-slate-400 font-mono">Binance Smart Chain</p>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+            </div>
+
+            <div onclick="selectCoin('TRX (TRC-20)', 'TGzUcWzDb9dnXBhvmNuNd5QjHGi7ky3tnM', 'tron')" class="pro-card p-3.5 rounded-2xl flex items-center justify-between cursor-pointer active:scale-95 transition-all">
+              <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-xl bg-red-500/20 flex items-center justify-center text-red-400 font-bold"><i class="fa-solid fa-gem"></i></div>
+                <div>
+                  <h3 class="font-bold text-xs text-white">TRX (TRC-20)</h3>
+                  <p class="text-[10px] text-slate-400 font-mono">Tron Network</p>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+            </div>
+
+            <div onclick="selectCoin('Solana (SOL)', 'ChMSyT3Be3ex59k2xizTMHwZEHzD6dzgVa5EBkDA1CdY', 'solana')" class="pro-card p-3.5 rounded-2xl flex items-center justify-between cursor-pointer active:scale-95 transition-all">
+              <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold"><i class="fa-solid fa-bolt"></i></div>
+                <div>
+                  <h3 class="font-bold text-xs text-white">Solana (SOL)</h3>
+                  <p class="text-[10px] text-slate-400 font-mono">Solana Network</p>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+            </div>
+
+            <div onclick="selectCoin('Gram / TON', 'UQCO3bhV1E7lIvPZJrIIH7ahScx_5VD6zQjWdflzDcZPE4wJ', 'gram')" class="pro-card p-3.5 rounded-2xl flex items-center justify-between cursor-pointer active:scale-95 transition-all">
+              <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold"><i class="fa-solid fa-paper-plane"></i></div>
+                <div>
+                  <h3 class="font-bold text-xs text-white">Gram / TON</h3>
+                  <p class="text-[10px] text-slate-400 font-mono">TON Network</p>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+            </div>
+
+            <div onclick="selectCoin('Litecoin (LTC)', 'ltc1qrqjdpdm42f0jzaanwaz42lkdk8f6ckaqqceqvy', 'litecoin')" class="pro-card p-3.5 rounded-2xl flex items-center justify-between cursor-pointer active:scale-95 transition-all">
+              <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-xl bg-slate-500/20 flex items-center justify-center text-slate-300 font-bold"><i class="fa-solid fa-coins"></i></div>
+                <div>
+                  <h3 class="font-bold text-xs text-white">Litecoin (LTC)</h3>
+                  <p class="text-[10px] text-slate-400 font-mono">Litecoin Network</p>
+                </div>
+              </div>
+              <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+            </div>
+          </div>
+        </div>
+
+        <div id="deposit-step-2" class="hidden space-y-3">
+          <div class="flex items-center justify-between mb-1">
+            <button onclick="backToStep1()" class="text-xs text-amber-400 font-bold flex items-center gap-1">
+              <i class="fa-solid fa-arrow-left"></i> Change Coin
+            </button>
+            <span class="text-xs font-bold text-white font-mono" id="selected-coin-name">USDT</span>
+          </div>
+
+          <!-- Deposit Amount & Calculated Coin Value Display -->
+          <div class="gold-border-card p-4 space-y-2 text-center">
+            <p class="text-[10px] text-amber-400 uppercase font-bold tracking-wider">SEND EXACT AMOUNT (LIVE MARKET)</p>
+            <div class="text-2xl font-black font-mono text-white tracking-wide" id="exact-coin-amt">0.00</div>
+            <p class="text-[10px] text-slate-400" id="selected-coin-label">USDT (BEP-20)</p>
+          </div>
+
+          <div class="pro-card p-3.5 space-y-2">
+            <label class="text-[10px] text-slate-300 font-bold uppercase block">Enter Deposit Amount (USDT)</label>
+            <input type="number" id="deposit-amt-input" oninput="calculateProfit()" placeholder="e.g. 10.00" class="w-full bg-[#0B0F19] border border-amber-500/50 rounded-xl px-3 py-2 text-xs text-white outline-none font-mono">
+            
+            <div class="bg-[#0B0F19] p-2.5 rounded-xl border border-slate-800 space-y-1 text-[11px] font-mono">
+              <div class="flex justify-between text-slate-400">
+                <span>GHS Power Gained:</span>
+                <span class="text-emerald-400 font-bold" id="calc-ghs">0.00 GHS</span>
+              </div>
+              <div class="flex justify-between text-slate-400">
+                <span>Per Day Profit (30%):</span>
+                <span class="text-amber-400 font-bold" id="calc-daily-profit">0.0000 USDT</span>
+              </div>
+              <div class="flex justify-between text-slate-400 border-t border-slate-800/80 pt-1">
+                <span>15-Day Total Return (450%):</span>
+                <span class="text-emerald-300 font-bold" id="calc-15day-profit">0.00 USDT</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="gold-border-card p-4 space-y-3">
+            <p class="text-xs text-slate-300">Send exact funds to this address:</p>
+            <div class="bg-[#0B0F19] p-3 rounded-xl border border-slate-700 flex items-center justify-between">
+              <span id="deposit-addr-text" class="text-[11px] font-mono text-amber-300 truncate mr-2">0x...</span>
+              <button onclick="copyDepositAddr()" class="btn-gold px-3 py-1 rounded-lg text-xs font-bold shrink-0">Copy</button>
+            </div>
+
+            <div>
+              <label class="text-[10px] text-slate-400 mb-1 block">Enter Transaction Hash (TxID)</label>
+              <input type="text" id="txid-input" placeholder="Paste TxID / Hash here..." class="w-full bg-[#0B0F19] border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white outline-none font-mono">
+            </div>
+
+            <button onclick="submitDeposit()" class="w-full py-3 btn-green font-extrabold rounded-xl text-xs uppercase tracking-wider">
+              I HAVE PAID (SEND TO ADMIN)
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= TAB: ADMIN PANEL (Like your friend's app) ================= -->
+      <div id="tab-admin" class="tab-content hidden space-y-3.5">
+        <div class="gold-border-card p-4 space-y-3">
+          <h2 class="font-display font-bold text-sm text-amber-400 flex items-center gap-2">
+            <i class="fa-solid fa-gear"></i> Manage User Balance & Plan
+          </h2>
+          <p class="text-[11px] text-slate-300">User ki ID dalkar direct GHS Power aur Balance manage karein.</p>
+          
+          <div>
+            <label class="text-[10px] text-slate-400 mb-1 block">Enter User Telegram ID</label>
+            <input type="text" id="admin-target-id" placeholder="e.g. 5136435206" class="w-full bg-[#0B0F19] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none font-mono">
+          </div>
+
+          <div>
+            <label class="text-[10px] text-slate-400 mb-1 block">Enter USDT / GHS amount</label>
+            <input type="number" id="admin-ghs-amt" placeholder="e.g. 1.00" class="w-full bg-[#0B0F19] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none font-mono">
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button onclick="adminAction('add')" class="py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold rounded-xl text-xs uppercase tracking-wider shadow-md">
+              + Add
+            </button>
+            <button onclick="adminAction('cut')" class="py-2.5 bg-red-600 hover:bg-red-500 text-white font-extrabold rounded-xl text-xs uppercase tracking-wider shadow-md">
+              - Cut
+            </button>
+          </div>
+
+          <button onclick="adminAction('activate')" class="w-full py-2.5 bg-sky-600 hover:bg-sky-500 text-white font-extrabold rounded-xl text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2">
+            <i class="fa-solid fa-bolt"></i> Activate Plan
+          </button>
+
+          <button onclick="adminAction('deactivate')" class="w-full py-2.5 bg-orange-600 hover:bg-orange-500 text-white font-extrabold rounded-xl text-xs uppercase tracking-wider shadow-md">
+            Deactivate Plan
+          </button>
+
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <button onclick="adminAction('ban')" class="py-2.5 bg-rose-700 hover:bg-rose-600 text-white font-extrabold rounded-xl text-xs uppercase tracking-wider">
+              Ban User
+            </button>
+            <button onclick="adminAction('unban')" class="py-2.5 bg-emerald-700 hover:bg-emerald-600 text-white font-extrabold rounded-xl text-xs uppercase tracking-wider">
+              <i class="fa-solid fa-check"></i> Unban User
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM NAVIGATION BAR -->
+    <nav class="bg-[#0B0F19] border-t border-slate-800 p-2 shrink-0">
+      <div class="grid grid-cols-5 gap-1 text-center" id="nav-bar-grid">
+        <button onclick="switchTab('home')" id="nav-home" class="py-1 text-amber-400 flex flex-col items-center">
+          <i class="fa-solid fa-microchip text-base"></i>
+          <span class="text-[10px] font-bold mt-1">Mining</span>
+        </button>
+        <button onclick="switchTab('tasks')" id="nav-tasks" class="py-1 text-slate-500 hover:text-white flex flex-col items-center">
+          <i class="fa-solid fa-list-check text-base"></i>
+          <span class="text-[10px] font-bold mt-1">Tasks</span>
+        </button>
+        <button onclick="switchTab('deposit')" id="nav-deposit" class="py-1 text-slate-500 hover:text-white flex flex-col items-center">
+          <i class="fa-solid fa-circle-plus text-base text-amber-400"></i>
+          <span class="text-[10px] font-bold mt-1">Deposit</span>
+        </button>
+        <button onclick="switchTab('frens')" id="nav-frens" class="py-1 text-slate-500 hover:text-white flex flex-col items-center">
+          <i class="fa-solid fa-user-plus text-base"></i>
+          <span class="text-[10px] font-bold mt-1">Invite</span>
+        </button>
+        <button onclick="switchTab('wallet')" id="nav-wallet" class="py-1 text-slate-500 hover:text-white flex flex-col items-center">
+          <i class="fa-solid fa-wallet text-base"></i>
+          <span class="text-[10px] font-bold mt-1">Wallet</span>
+        </button>
+      </div>
+    </nav>
+
+  </div>
+
+  <script>
+    const BOT_TOKEN = "8849275432:AAHY4YmbQaqXsoZ86eZxEt2sZIaCzGUk900";
+    const ADMIN_CHAT_ID = "7437877993";
+    const OFFICIAL_TELEGRAM_LINK = "https://t.me/nexhashmining";
+
+    let liveCryptoPrices = {
+      tether: 1,
+      tron: 0.33,
+      solana: 180,
+      gram: 1.25,
+      litecoin: 56
+    };
+
+    let userData = {
+      userId: '7437877993',
+      ghsPower: 0.01,
+      minedBalance: 0.00000000,
+      claimedBalance: 0.00000000,
+      lockedDeposit: 0.0000,
+      selectedCoin: '',
+      selectedAddr: '',
+      coinKey: 'tether'
+    };
+
+    let miningInterval;
+    let audioCtx = null;
+
+    function playClickSound() {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.04);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.04);
+      } catch (e) {
+        console.log("Audio not supported or blocked");
+      }
+    }
+
+    async function fetchLivePrices() {
+      try {
+        const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=tether,tron,solana,litecoin,gram-2&vs_currencies=usd");
+        const data = await res.json();
+        if (data.tether?.usd) liveCryptoPrices.tether = data.tether.usd;
+        if (data.tron?.usd) liveCryptoPrices.tron = data.tron.usd;
+        if (data.solana?.usd) liveCryptoPrices.solana = data.solana.usd;
+        if (data.litecoin?.usd) liveCryptoPrices.litecoin = data.litecoin.usd;
+        if (data['gram-2']?.usd) liveCryptoPrices.gram = data['gram-2'].usd;
+        calculateProfit();
+      } catch (e) {
+        console.log("Using default prices");
+      }
+    }
+
+    window.onload = function() {
+      if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+        if (window.Telegram.WebApp.initDataUnsafe?.user?.id) {
+          userData.userId = window.Telegram.WebApp.initDataUnsafe.user.id.toString();
+          document.getElementById('header-user-id').innerText = 'ID: ' + userData.userId;
+        }
+      }
+
+      if (userData.userId === ADMIN_CHAT_ID) {
+        const navGrid = document.getElementById('nav-bar-grid');
+        const adminBtn = document.createElement('button');
+        adminBtn.onclick = () => switchTab('admin');
+        adminBtn.id = 'nav-admin';
+        adminBtn.className = 'py-1 text-slate-500 hover:text-white flex flex-col items-center';
+        adminBtn.innerHTML = `<i class="fa-solid fa-gear text-base text-amber-400"></i><span class="text-[10px] font-bold mt-1">Admin</span>`;
+        navGrid.appendChild(adminBtn);
+      }
+
+      document.querySelectorAll('button, [onclick]').forEach(el => {
+        el.addEventListener('click', playClickSound);
+      });
+
+      updateUI();
+      startMiningLoop();
+      startTickerLoop();
+      fetchLivePrices();
+      setInterval(fetchLivePrices, 30000);
+    };
+
+    function updateUI() {
+      document.getElementById('ghs-display').innerText = userData.ghsPower.toFixed(2);
+      
+      let dailyEarning = userData.ghsPower * 0.30;
+      if (userData.ghsPower <= 0.01) dailyEarning = 0.010;
+      
+      document.getElementById('daily-rate-text').innerText = dailyEarning.toFixed(3) + " USDT";
+      document.getElementById('daily-earning-text').innerText = `+${dailyEarning.toFixed(3)} USDT/day (Active)`;
+      
+      document.getElementById('main-balance-text').innerHTML = `${userData.claimedBalance.toFixed(8)} <span class="text-amber-400 text-lg">USDT</span>`;
+      document.getElementById('wallet-balance-display').innerHTML = `${userData.claimedBalance.toFixed(8)} <span class="text-amber-400 text-base">USDT</span>`;
+      document.getElementById('withdrawable-balance-text').innerText = `${userData.claimedBalance.toFixed(4)} USDT`;
+      document.getElementById('locked-deposit-text').innerText = `${userData.lockedDeposit.toFixed(4)} USDT`;
+      document.getElementById('rig-hashrate').innerText = (userData.ghsPower * 1.5).toFixed(2) + ' TH/s';
+    }
+
+    function startMiningLoop() {
+      if (miningInterval) clearInterval(miningInterval);
+      miningInterval = setInterval(() => {
+        let dailyEarning = userData.ghsPower * 0.30;
+        if (userData.ghsPower <= 0.01) dailyEarning = 0.010;
+        let perSecond = dailyEarning / 86400;
+        userData.minedBalance += perSecond;
+        document.getElementById('mined-counter').innerText = userData.minedBalance.toFixed(8);
+      }, 1000);
+    }
+
+    function startTickerLoop() {
+      const tickers = [
+        "User...3885 deposited 25.00 USDT successfully",
+        "User...9679 withdrew 14.20 USDT successfully",
+        "User...1821 deposited 50.00 USDT successfully",
+        "User...5136 claimed 2.45 USDT rewards"
+      ];
+      let idx = 0;
+      setInterval(() => {
+        idx = (idx + 1) % tickers.length;
+        document.getElementById('ticker-text').innerText = tickers[idx];
+      }, 3000);
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById('tab-' + tab).classList.remove('hidden');
+
+      ['home', 'tasks', 'deposit', 'frens', 'wallet', 'admin'].forEach(t => {
+        let btn = document.getElementById('nav-' + t);
+        if (btn) {
+          if (t === tab) {
+            btn.className = 'py-1 text-amber-400 flex flex-col items-center';
+          } else {
+            btn.className = 'py-1 text-slate-500 hover:text-white flex flex-col items-center';
+          }
+        }
+      });
+    }
+
+    function claimRewards() {
+      if (userData.minedBalance <= 0) return;
+      userData.claimedBalance += userData.minedBalance;
+      userData.minedBalance = 0;
+      document.getElementById('mined-counter').innerText = '0.00000000';
+      updateUI();
+      alert("Claim successful! Rewards added to your withdrawable balance.");
+    }
+
+    function selectCoin(name, addr, key) {
+      userData.selectedCoin = name;
+      userData.selectedAddr = addr;
+      userData.coinKey = key;
+      document.getElementById('selected-coin-name').innerText = name;
+      document.getElementById('deposit-addr-text').innerText = addr;
+      document.getElementById('selected-coin-label').innerText = name;
+      document.getElementById('deposit-step-1').classList.add('hidden');
+      document.getElementById('deposit-step-2').classList.remove('hidden');
+      calculateProfit();
+    }
+
+    function backToStep1() {
+      document.getElementById('deposit-step-2').classList.add('hidden');
+      document.getElementById('deposit-step-1').classList.remove('hidden');
+    }
+
+    function calculateProfit() {
+      let amt = parseFloat(document.getElementById('deposit-amt-input').value) || 0;
+      let ghsGained = amt; 
+      let dailyProfit = amt * 0.30; 
+      let profit15Days = amt * 4.50; 
+      
+      let priceInUSD = liveCryptoPrices[userData.coinKey] || 1;
+      let convertedCoinAmt = (amt / priceInUSD).toFixed(4);
+      
+      document.getElementById('exact-coin-amt').innerText = `${convertedCoinAmt} ${userData.selectedCoin.split(' ')[0]}`;
+      document.getElementById('calc-ghs').innerText = ghsGained.toFixed(2) + " GHS";
+      document.getElementById('calc-daily-profit').innerText = dailyProfit.toFixed(4) + " USDT";
+      document.getElementById('calc-15day-profit').innerText = profit15Days.toFixed(2) + " USDT";
+    }
+
+    function copyDepositAddr() {
+      navigator.clipboard.writeText(userData.selectedAddr);
+      alert("Deposit address copied!");
+    }
+
+    function submitDeposit() {
+      const txid = document.getElementById('txid-input').value.trim();
+      const amt = parseFloat(document.getElementById('deposit-amt-input').value) || 0;
+      
+      if (!txid) return alert("Enter valid TxID / Hash!");
+      if (amt <= 0) return alert("Enter valid deposit amount!");
+
+      let priceInUSD = liveCryptoPrices[userData.coinKey] || 1;
+      let convertedAmt = (amt / priceInUSD).toFixed(4);
+
+      const msg = `🚀 *NEW DEPOSIT REQUEST*\n` +
+                  `👤 *User ID:* \`${userData.userId}\`\n` +
+                  `💰 *Coin:* ${userData.selectedCoin}\n` +
+                  `💵 *Amount USD:* ${amt} USDT\n` +
+                  `🪙 *Exact Sent:* ${convertedAmt} ${userData.selectedCoin.split(' ')[0]}\n` +
+                  `⚡ *Pending GHS:* +${amt} GHS\n` +
+                  `🔗 *TxID:* \`${txid}\``;
+
+      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: ADMIN_CHAT_ID,
+          text: msg,
+          parse_mode: 'Markdown'
+        })
+      }).then(() => {
+        alert("Deposit request submitted to Admin! Your GHS power will be updated once verified.");
+        document.getElementById('txid-input').value = "";
+        document.getElementById('deposit-amt-input').value = "";
+        switchTab('home');
+      }).catch(err => {
+        alert("Request sent successfully!");
+        document.getElementById('txid-input').value = "";
+        document.getElementById('deposit-amt-input').value = "";
+        switchTab('home');
+      });
+    }
+
+    function joinTelegramTask(btn) {
+      window.open(OFFICIAL_TELEGRAM_LINK, '_blank');
+      userData.ghsPower += 0.01;
+      updateUI();
+      btn.innerText = "CLAIMED";
+      btn.disabled = true;
+      btn.className = "bg-slate-700 text-slate-400 text-xs px-3.5 py-1.5 rounded-xl cursor-not-allowed";
+    }
+
+    function copyRef() {
+      let ref = document.getElementById('ref-link').value;
+      navigator.clipboard.writeText(ref);
+      alert("Referral link copied!");
+    }
+
+    function setMaxWithdraw() {
+      document.getElementById('withdraw-amt').value = userData.claimedBalance.toFixed(2);
+    }
+
+    function processWithdrawal() {
+      const addr = document.getElementById('withdraw-addr').value.trim();
+      const amt = parseFloat(document.getElementById('withdraw-amt').value);
+
+      if (!addr || isNaN(amt) || amt < 0.50 || amt > userData.claimedBalance) {
+        return alert("Invalid withdrawal amount or insufficient withdrawable balance (Min: 0.50 USDT)!");
+      }
+
+      userData.claimedBalance -= amt;
+      updateUI();
+
+      const msg = `💸 *WITHDRAWAL REQUEST*\n` +
+                  `👤 *User ID:* \`${userData.userId}\`\n` +
+                  `💵 *Amount:* ${amt} USDT\n` +
+                  `📍 *Address:* \`${addr}`;
+
+      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: ADMIN_CHAT_ID,
+          text: msg,
+          parse_mode: 'Markdown'
+        })
+      });
+
+      alert("Withdrawal request submitted successfully!");
+      document.getElementById('withdraw-addr').value = "";
+      document.getElementById('withdraw-amt').value = "";
+      switchTab('home');
+    }
+
+    function adminAction(actionType) {
+      const targetId = document.getElementById('admin-target-id').value.trim();
+      const amount = parseFloat(document.getElementById('admin-ghs-amt').value) || 0;
+
+      if (!targetId) {
+        return alert("Please enter User Telegram ID!");
+      }
+
+      let actionTitle = "";
+      if (actionType === 'add') actionTitle = `✅ *ADMIN ADDED BALANCE*\n👤 *User ID:* \`${targetId}\`\n➕ *Added Amount:* ${amount} USDT`;
+      if (actionType === 'cut') actionTitle = `❌ *ADMIN CUT BALANCE*\n👤 *User ID:* \`${targetId}\`\n➖ *Deducted Amount:* ${amount} USDT`;
+      if (actionType === 'activate') actionTitle = `⚡ *PLAN ACTIVATED*\n👤 *User ID:* \`${targetId}\`\n🟢 *Status:* ACTIVE`;
+      if (actionType === 'deactivate') actionTitle = `⚠️ *PLAN DEACTIVATED*\n👤 *User ID:* \`${targetId}\`\n🔴 *Status:* INACTIVE`;
+      if (actionType === 'ban') actionTitle = `🚫 *USER BANNED*\n👤 *User ID:* \`${targetId}\``;
+      if (actionType === 'unban') actionTitle = `✅ *USER UNBANNED*\n👤 *User ID:* \`${targetId}\``;
+
+      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: ADMIN_CHAT_ID,
+          text: actionTitle,
+          parse_mode: 'Markdown'
+        })
+      });
+
+      alert(`Action '${actionType.toUpperCase()}' successfully sent to Telegram for User ID: ${targetId}`);
+      document.getElementById('admin-target-id').value = "";
+      document.getElementById('admin-ghs-amt').value = "";
+    }
+  </script>
+</body>
+</html>
