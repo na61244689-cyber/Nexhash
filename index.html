@@ -811,7 +811,7 @@
       const amt = parseFloat(document.getElementById('withdraw-amt').value);
 
       if (!addr || isNaN(amt) || amt < 0.50 || amt > userData.claimedBalance) {
-        return alert("Invalid withdrawal amount or insufficient withdrawable balance (Min: 0.50 USDT)!");
+        return alert("Invalid withdrawal  amount or insufficient withdrawable balance (Min: 0.50 USDT)!");
       }
 
       userData.claimedBalance -= amt;
@@ -843,20 +843,18 @@
       const targetId = document.getElementById('admin-target-id').value.trim();
       const amount = parseFloat(document.getElementById('admin-ghs-amt').value) || 0;
 
-      if (!targetId) {
-        return alert("Please enter User Telegram ID!");
+      if (!targetId || isNaN(amount) || amount <= 0) {
+        return alert("Please enter valid User ID and amount!");
       }
 
-      if (targetId === userData.userId) {
-        if (actionType === 'add') {
-          userData.ghsPower += amount;
-          userData.lockedDeposit += amount;
-        } else if (actionType === 'cut') {
-          userData.ghsPower = Math.max(0.01, userData.ghsPower - amount);
-        }
-        updateUI();
-        saveUserData();
+      if (actionType === 'add') {
+        userData.ghsPower += amount;
+        userData.lockedDeposit += amount;
+      } else if (actionType === 'cut') {
+        userData.ghsPower = Math.max(0.01, userData.ghsPower - amount);
       }
+      updateUI();
+      saveUserData();
 
       let actionTitle = "";
       if (actionType === 'add') actionTitle = `✅ *ADMIN ADDED BALANCE*\n👤 *User ID:* \`${targetId}\`\n➕ *Added Amount:* ${amount} USDT`;
@@ -876,7 +874,7 @@
         })
       });
 
-      alert(`Action '${actionType.toUpperCase()}' successfully sent for User ID: ${targetId}`);
+      alert(`Action '${actionType.toUpperCase()}' successfully applied for User ID: ${targetId}`);
       document.getElementById('admin-target-id').value = "";
       document.getElementById('admin-ghs-amt').value = "";
     }
