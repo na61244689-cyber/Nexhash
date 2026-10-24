@@ -340,13 +340,18 @@
       <!-- ================= TAB: DEPOSIT ================= -->
       <div id="tab-deposit" class="tab-content hidden space-y-3">
         <div id="deposit-step-1" class="space-y-3">
-          <div class="gold-border-card p-4">
-            <h2 class="font-display font-bold text-sm text-white">SELECT CRYPTOCURRENCY</h2>
-            <p class="text-xs text-slate-400 mt-0.5">Choose your payment coin to add GHS power.</p>
+          <div class="gold-border-card p-4 flex justify-between items-center">
+            <div>
+              <h2 class="font-display font-bold text-sm text-white">SELECT CRYPTOCURRENCY</h2>
+              <p class="text-xs text-slate-400 mt-0.5">Choose payment coin (LIVE RATES)</p>
+            </div>
+            <span class="text-[9px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/30 flex items-center gap-1">
+              <i class="fa-solid fa-rotate animate-spin"></i> LIVE
+            </span>
           </div>
 
           <div class="space-y-2">
-            <div onclick="selectCoin('USDT (BEP-20)', '0x6ef06b054dF1C2D4E310f6290697B440A062C7dC')" class="pro-card p-3.5 rounded-2xl flex items-center justify-between cursor-pointer active:scale-95 transition-all">
+            <div onclick="selectCoin('USDT (BEP-20)', '0x6ef06b054dF1C2D4E310f6290697B440A062C7dC', 'tether')" class="pro-card p-3.5 rounded-2xl flex items-center justify-between cursor-pointer active:scale-95 transition-all">
               <div class="flex items-center space-x-3">
                 <div class="w-9 h-9 rounded-xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 font-bold">₮</div>
                 <div>
@@ -357,7 +362,7 @@
               <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
             </div>
 
-            <div onclick="selectCoin('TRX (TRC-20)', 'TGzUcWzDb9dnXBhvmNuNd5QjHGi7ky3tnM')" class="pro-card p-3.5 rounded-2xl flex items-center justify-between cursor-pointer active:scale-95 transition-all">
+            <div onclick="selectCoin('TRX (TRC-20)', 'TGzUcWzDb9dnXBhvmNuNd5QjHGi7ky3tnM', 'tron')" class="pro-card p-3.5 rounded-2xl flex items-center justify-between cursor-pointer active:scale-95 transition-all">
               <div class="flex items-center space-x-3">
                 <div class="w-9 h-9 rounded-xl bg-red-500/20 flex items-center justify-center text-red-400 font-bold"><i class="fa-solid fa-gem"></i></div>
                 <div>
@@ -368,7 +373,7 @@
               <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
             </div>
 
-            <div onclick="selectCoin('Solana (SOL)', 'ChMSyT3Be3ex59k2xizTMHwZEHzD6dzgVa5EBkDA1CdY')" class="pro-card p-3.5 rounded-2xl flex items-center justify-between cursor-pointer active:scale-95 transition-all">
+            <div onclick="selectCoin('Solana (SOL)', 'ChMSyT3Be3ex59k2xizTMHwZEHzD6dzgVa5EBkDA1CdY', 'solana')" class="pro-card p-3.5 rounded-2xl flex items-center justify-between cursor-pointer active:scale-95 transition-all">
               <div class="flex items-center space-x-3">
                 <div class="w-9 h-9 rounded-xl bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold"><i class="fa-solid fa-bolt"></i></div>
                 <div>
@@ -379,7 +384,7 @@
               <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
             </div>
 
-            <div onclick="selectCoin('Gram / TON', 'UQCO3bhV1E7lIvPZJrIIH7ahScx_5VD6zQjWdflzDcZPE4wJ')" class="pro-card p-3.5 rounded-2xl flex items-center justify-between cursor-pointer active:scale-95 transition-all">
+            <div onclick="selectCoin('Gram / TON', 'UQCO3bhV1E7lIvPZJrIIH7ahScx_5VD6zQjWdflzDcZPE4wJ', 'gram')" class="pro-card p-3.5 rounded-2xl flex items-center justify-between cursor-pointer active:scale-95 transition-all">
               <div class="flex items-center space-x-3">
                 <div class="w-9 h-9 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold"><i class="fa-solid fa-paper-plane"></i></div>
                 <div>
@@ -390,7 +395,7 @@
               <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
             </div>
 
-            <div onclick="selectCoin('Litecoin (LTC)', 'ltc1qrqjdpdm42f0jzaanwaz42lkdk8f6ckaqqceqvy')" class="pro-card p-3.5 rounded-2xl flex items-center justify-between cursor-pointer active:scale-95 transition-all">
+            <div onclick="selectCoin('Litecoin (LTC)', 'ltc1qrqjdpdm42f0jzaanwaz42lkdk8f6ckaqqceqvy', 'litecoin')" class="pro-card p-3.5 rounded-2xl flex items-center justify-between cursor-pointer active:scale-95 transition-all">
               <div class="flex items-center space-x-3">
                 <div class="w-9 h-9 rounded-xl bg-slate-500/20 flex items-center justify-center text-slate-300 font-bold"><i class="fa-solid fa-coins"></i></div>
                 <div>
@@ -411,7 +416,13 @@
             <span class="text-xs font-bold text-white font-mono" id="selected-coin-name">USDT</span>
           </div>
 
-          <!-- Deposit Amount & Profit Breakdown -->
+          <!-- Deposit Amount & Calculated Coin Value Display -->
+          <div class="gold-border-card p-4 space-y-2 text-center">
+            <p class="text-[10px] text-amber-400 uppercase font-bold tracking-wider">SEND EXACT AMOUNT (LIVE MARKET)</p>
+            <div class="text-2xl font-black font-mono text-white tracking-wide" id="exact-coin-amt">0.00</div>
+            <p class="text-[10px] text-slate-400" id="selected-coin-label">USDT (BEP-20)</p>
+          </div>
+
           <div class="pro-card p-3.5 space-y-2">
             <label class="text-[10px] text-slate-300 font-bold uppercase block">Enter Deposit Amount (USDT)</label>
             <input type="number" id="deposit-amt-input" oninput="calculateProfit()" placeholder="e.g. 10.00" class="w-full bg-[#0B0F19] border border-amber-500/50 rounded-xl px-3 py-2 text-xs text-white outline-none font-mono">
@@ -451,11 +462,35 @@
         </div>
       </div>
 
+      <!-- ================= TAB: ADMIN PANEL (Only for Admin ID) ================= -->
+      <div id="tab-admin" class="tab-content hidden space-y-3">
+        <div class="gold-border-card p-4 space-y-3">
+          <h2 class="font-display font-bold text-sm text-amber-400 flex items-center gap-2">
+            <i class="fa-solid fa-shield-halved"></i> ADMIN POWER PANEL
+          </h2>
+          <p class="text-[11px] text-slate-300">User ko GHS Power assign karne ke liye yahan ID aur Amount daalein.</p>
+          
+          <div>
+            <label class="text-[10px] text-slate-400 mb-1 block">Target User Telegram ID</label>
+            <input type="text" id="admin-target-id" placeholder="e.g. 8869827167" class="w-full bg-[#0B0F19] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none font-mono">
+          </div>
+
+          <div>
+            <label class="text-[10px] text-slate-400 mb-1 block">GHS Power to Add</label>
+            <input type="number" id="admin-ghs-amt" placeholder="e.g. 1.00" class="w-full bg-[#0B0F19] border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none font-mono">
+          </div>
+
+          <button onclick="adminGrantPower()" class="w-full py-3 btn-gold font-extrabold rounded-xl text-xs uppercase tracking-wider">
+            Grant GHS Power to User
+          </button>
+        </div>
+      </div>
+
     </div>
 
     <!-- BOTTOM NAVIGATION BAR -->
     <nav class="bg-[#0B0F19] border-t border-slate-800 p-2 shrink-0">
-      <div class="grid grid-cols-5 gap-1 text-center">
+      <div class="grid grid-cols-5 gap-1 text-center" id="nav-bar-grid">
         <button onclick="switchTab('home')" id="nav-home" class="py-1 text-amber-400 flex flex-col items-center">
           <i class="fa-solid fa-microchip text-base"></i>
           <span class="text-[10px] font-bold mt-1">Mining</span>
@@ -486,6 +521,14 @@
     const ADMIN_CHAT_ID = "7437877993";
     const OFFICIAL_TELEGRAM_LINK = "https://t.me/nexhashmining";
 
+    let liveCryptoPrices = {
+      tether: 1,
+      tron: 0.33,
+      solana: 180,
+      gram: 1.25,
+      litecoin: 56
+    };
+
     let userData = {
       userId: '7437877993',
       ghsPower: 0.01,
@@ -493,7 +536,8 @@
       claimedBalance: 0.00000000,
       lockedDeposit: 0.0000,
       selectedCoin: '',
-      selectedAddr: ''
+      selectedAddr: '',
+      coinKey: 'tether'
     };
 
     let miningInterval;
@@ -523,14 +567,39 @@
       }
     }
 
+    async function fetchLivePrices() {
+      try {
+        const res = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=tether,tron,solana,litecoin,gram-2&vs_currencies=usd");
+        const data = await res.json();
+        if (data.tether?.usd) liveCryptoPrices.tether = data.tether.usd;
+        if (data.tron?.usd) liveCryptoPrices.tron = data.tron.usd;
+        if (data.solana?.usd) liveCryptoPrices.solana = data.solana.usd;
+        if (data.litecoin?.usd) liveCryptoPrices.litecoin = data.litecoin.usd;
+        if (data['gram-2']?.usd) liveCryptoPrices.gram = data['gram-2'].usd;
+        calculateProfit();
+      } catch (e) {
+        console.log("Using default prices");
+      }
+    }
+
     window.onload = function() {
       if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
         if (window.Telegram.WebApp.initDataUnsafe?.user?.id) {
-          userData.userId = window.Telegram.WebApp.initDataUnsafe.user.id;
+          userData.userId = window.Telegram.WebApp.initDataUnsafe.user.id.toString();
           document.getElementById('header-user-id').innerText = 'ID: ' + userData.userId;
         }
+      }
+
+      if (userData.userId === ADMIN_CHAT_ID) {
+        const navGrid = document.getElementById('nav-bar-grid');
+        const adminBtn = document.createElement('button');
+        adminBtn.onclick = () => switchTab('admin');
+        adminBtn.id = 'nav-admin';
+        adminBtn.className = 'py-1 text-slate-500 hover:text-white flex flex-col items-center';
+        adminBtn.innerHTML = `<i class="fa-solid fa-shield-halved text-base text-amber-400"></i><span class="text-[10px] font-bold mt-1">Admin</span>`;
+        navGrid.appendChild(adminBtn);
       }
 
       document.querySelectorAll('button, [onclick]').forEach(el => {
@@ -540,6 +609,8 @@
       updateUI();
       startMiningLoop();
       startTickerLoop();
+      fetchLivePrices();
+      setInterval(fetchLivePrices, 30000);
     };
 
     function updateUI() {
@@ -587,12 +658,14 @@
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.getElementById('tab-' + tab).classList.remove('hidden');
 
-      ['home', 'tasks', 'deposit', 'frens', 'wallet'].forEach(t => {
+      ['home', 'tasks', 'deposit', 'frens', 'wallet', 'admin'].forEach(t => {
         let btn = document.getElementById('nav-' + t);
-        if (t === tab) {
-          btn.className = 'py-1 text-amber-400 flex flex-col items-center';
-        } else {
-          btn.className = 'py-1 text-slate-500 hover:text-white flex flex-col items-center';
+        if (btn) {
+          if (t === tab) {
+            btn.className = 'py-1 text-amber-400 flex flex-col items-center';
+          } else {
+            btn.className = 'py-1 text-slate-500 hover:text-white flex flex-col items-center';
+          }
         }
       });
     }
@@ -606,13 +679,16 @@
       alert("Claim successful! Rewards added to your withdrawable balance.");
     }
 
-    function selectCoin(name, addr) {
+    function selectCoin(name, addr, key) {
       userData.selectedCoin = name;
       userData.selectedAddr = addr;
+      userData.coinKey = key;
       document.getElementById('selected-coin-name').innerText = name;
       document.getElementById('deposit-addr-text').innerText = addr;
+      document.getElementById('selected-coin-label').innerText = name;
       document.getElementById('deposit-step-1').classList.add('hidden');
       document.getElementById('deposit-step-2').classList.remove('hidden');
+      calculateProfit();
     }
 
     function backToStep1() {
@@ -626,6 +702,10 @@
       let dailyProfit = amt * 0.30; 
       let profit15Days = amt * 4.50; 
       
+      let priceInUSD = liveCryptoPrices[userData.coinKey] || 1;
+      let convertedCoinAmt = (amt / priceInUSD).toFixed(4);
+      
+      document.getElementById('exact-coin-amt').innerText = `${convertedCoinAmt} ${userData.selectedCoin.split(' ')[0]}`;
       document.getElementById('calc-ghs').innerText = ghsGained.toFixed(2) + " GHS";
       document.getElementById('calc-daily-profit').innerText = dailyProfit.toFixed(4) + " USDT";
       document.getElementById('calc-15day-profit').innerText = profit15Days.toFixed(2) + " USDT";
@@ -643,10 +723,14 @@
       if (!txid) return alert("Enter valid TxID / Hash!");
       if (amt <= 0) return alert("Enter valid deposit amount!");
 
+      let priceInUSD = liveCryptoPrices[userData.coinKey] || 1;
+      let convertedAmt = (amt / priceInUSD).toFixed(4);
+
       const msg = `🚀 *NEW DEPOSIT REQUEST*\n` +
                   `👤 *User ID:* \`${userData.userId}\`\n` +
                   `💰 *Coin:* ${userData.selectedCoin}\n` +
-                  `💵 *Amount:* ${amt} USDT\n` +
+                  `💵 *Amount USD:* ${amt} USDT\n` +
+                  `🪙 *Exact Sent:* ${convertedAmt} ${userData.selectedCoin.split(' ')[0]}\n` +
                   `⚡ *Pending GHS:* +${amt} GHS\n` +
                   `🔗 *TxID:* \`${txid}\``;
 
@@ -719,6 +803,33 @@
       alert("Withdrawal request submitted successfully!");
       document.getElementById('withdraw-amt').value = "";
       switchTab('home');
+    }
+
+    function adminGrantPower() {
+      const targetId = document.getElementById('admin-target-id').value.trim();
+      const addGhs = parseFloat(document.getElementById('admin-ghs-amt').value);
+
+      if (!targetId || isNaN(addGhs) || addGhs <= 0) {
+        return alert("Please enter valid User ID and GHS amount!");
+      }
+
+      const adminMsg = `✅ *ADMIN POWER GRANTED*\n` +
+                       `👤 *To User ID:* \`${targetId}\`\n` +
+                       `⚡ *Added GHS:* +${addGhs} GHS`;
+
+      fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: ADMIN_CHAT_ID,
+          text: adminMsg,
+          parse_mode: 'Markdown'
+        })
+      });
+
+      alert(`Success! Notification sent for User ID: ${targetId}`);
+      document.getElementById('admin-target-id').value = "";
+      document.getElementById('admin-ghs-amt').value = "";
     }
   </script>
 </body>
