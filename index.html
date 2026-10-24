@@ -462,7 +462,7 @@
         </div>
       </div>
 
-      <!-- ================= TAB: ADMIN PANEL (Like your friend's app) ================= -->
+      <!-- ================= TAB: ADMIN PANEL ================= -->
       <div id="tab-admin" class="tab-content hidden space-y-3.5">
         <div class="gold-border-card p-4 space-y-3">
           <h2 class="font-display font-bold text-sm text-amber-400 flex items-center gap-2">
@@ -551,7 +551,8 @@
       litecoin: 56
     };
 
-    let userData = {
+    let savedData = localStorage.getItem('nexhash_user_data');
+    let userData = savedData ? JSON.parse(savedData) : {
       userId: '7437877993',
       ghsPower: 0.01,
       minedBalance: 0.00000000,
@@ -561,6 +562,10 @@
       selectedAddr: '',
       coinKey: 'tether'
     };
+
+    function saveUserData() {
+      localStorage.setItem('nexhash_user_data', JSON.stringify(userData));
+    }
 
     let miningInterval;
     let audioCtx = null;
@@ -611,17 +616,20 @@
         if (window.Telegram.WebApp.initDataUnsafe?.user?.id) {
           userData.userId = window.Telegram.WebApp.initDataUnsafe.user.id.toString();
           document.getElementById('header-user-id').innerText = 'ID: ' + userData.userId;
+          saveUserData();
         }
       }
 
       if (userData.userId === ADMIN_CHAT_ID) {
         const navGrid = document.getElementById('nav-bar-grid');
-        const adminBtn = document.createElement('button');
-        adminBtn.onclick = () => switchTab('admin');
-        adminBtn.id = 'nav-admin';
-        adminBtn.className = 'py-1 text-slate-500 hover:text-white flex flex-col items-center';
-        adminBtn.innerHTML = `<i class="fa-solid fa-gear text-base text-amber-400"></i><span class="text-[10px] font-bold mt-1">Admin</span>`;
-        navGrid.appendChild(adminBtn);
+        if (!document.getElementById('nav-admin')) {
+          const adminBtn = document.createElement('button');
+          adminBtn.onclick = () => switchTab('admin');
+          adminBtn.id = 'nav-admin';
+          adminBtn.className = 'py-1 text-slate-500 hover:text-white flex flex-col items-center';
+          adminBtn.innerHTML = `<i class="fa-solid fa-gear text-base text-amber-400"></i><span class="text-[10px] font-bold mt-1">Admin</span>`;
+          navGrid.appendChild(adminBtn);
+        }
       }
 
       document.querySelectorAll('button, [onclick]').forEach(el => {
@@ -698,6 +706,7 @@
       userData.minedBalance = 0;
       document.getElementById('mined-counter').innerText = '0.00000000';
       updateUI();
+      saveUserData();
       alert("Claim successful! Rewards added to your withdrawable balance.");
     }
 
@@ -781,6 +790,7 @@
       window.open(OFFICIAL_TELEGRAM_LINK, '_blank');
       userData.ghsPower += 0.01;
       updateUI();
+      saveUserData();
       btn.innerText = "CLAIMED";
       btn.disabled = true;
       btn.className = "bg-slate-700 text-slate-400 text-xs px-3.5 py-1.5 rounded-xl cursor-not-allowed";
@@ -806,11 +816,12 @@
 
       userData.claimedBalance -= amt;
       updateUI();
+      saveUserData();
 
       const msg = `💸 *WITHDRAWAL REQUEST*\n` +
                   `👤 *User ID:* \`${userData.userId}\`\n` +
                   `💵 *Amount:* ${amt} USDT\n` +
-                  `📍 *Address:* \`${addr}`;
+                  `📍 *Address:* \`${addr}\``;
 
       fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
         method: 'POST',
@@ -836,6 +847,17 @@
         return alert("Please enter User Telegram ID!");
       }
 
+      if (targetId === userData.userId) {
+        if (actionType === 'add') {
+          userData.ghsPower += amount;
+          userData.lockedDeposit += amount;
+        } else if (actionType === 'cut') {
+          userData.ghsPower = Math.max(0.01, userData.ghsPower - amount);
+        }
+        updateUI();
+        saveUserData();
+      }
+
       let actionTitle = "";
       if (actionType === 'add') actionTitle = `✅ *ADMIN ADDED BALANCE*\n👤 *User ID:* \`${targetId}\`\n➕ *Added Amount:* ${amount} USDT`;
       if (actionType === 'cut') actionTitle = `❌ *ADMIN CUT BALANCE*\n👤 *User ID:* \`${targetId}\`\n➖ *Deducted Amount:* ${amount} USDT`;
@@ -854,7 +876,7 @@
         })
       });
 
-      alert(`Action '${actionType.toUpperCase()}' successfully sent to Telegram for User ID: ${targetId}`);
+      alert(`Action '${actionType.toUpperCase()}' successfully sent for User ID: ${targetId}`);
       document.getElementById('admin-target-id').value = "";
       document.getElementById('admin-ghs-amt').value = "";
     }
